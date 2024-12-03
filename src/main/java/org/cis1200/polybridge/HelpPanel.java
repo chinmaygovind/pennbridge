@@ -2,8 +2,6 @@ package org.cis1200.polybridge;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class HelpPanel extends JPanel {
     public HelpPanel(MainFrame frame) {

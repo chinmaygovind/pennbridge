@@ -1,30 +1,202 @@
 package org.cis1200.polybridge;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GamePanel extends JPanel {
-    private GameManager gameManager;
+
+    private final Bridge bridge;
+    private final BridgeCanvas bridgeCanvas;
+
+    private static final int HIGHLIGHT_TOLERANCE = 20;
+
+    interface Mode extends MouseListener, MouseMotionListener { }
+    class JointMode extends MouseAdapter implements Mode {
+        Mode previousMode;
+        public JointMode() {
+            this.previousMode = this;
+        }
+        public JointMode(Mode previousMode) {
+            this.previousMode = previousMode;
+        }
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            // System.out.println("Previewing joint at " + e.getX() + ", " + e.getY());
+            preview = new JointPreview(e.getX(), e.getY(), bridgeCanvas);
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            // System.out.println("Adding joint at " + e.getX() + ", " + e.getY());
+            bridge.addJoint(e.getX(), e.getY());
+            bridgeCanvas.repaint();
+            setMode(previousMode);
+        }
+    }
+
+    class MemberStartMode extends MouseAdapter implements Mode {
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            Joint j = bridge.getClosestJoint(e.getX(), e.getY(), HIGHLIGHT_TOLERANCE);
+            if (j != null) bridgeCanvas.highlighted.add(j);
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            Joint j = bridge.getClosestJoint(e.getX(), e.getY(), 20);
+            if (j == null) {
+                return;
+            }
+            setMode(new MemberEndMode(j));
+        }
+    }
+
+    class MemberEndMode extends MouseAdapter implements Mode {
+
+        private final Joint startJoint;
+        public MemberEndMode(Joint startJoint) {
+            this.startJoint = startJoint;
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            preview = new MemberPreview(startJoint, e.getX(), e.getY());
+            Joint j = bridge.getClosestJoint(e.getX(), e.getY(), HIGHLIGHT_TOLERANCE);
+            bridgeCanvas.highlighted.add(j);
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            Joint endJoint = bridge.getClosestJoint(e.getX(), e.getY(), HIGHLIGHT_TOLERANCE);
+            if (endJoint != null && endJoint != startJoint) {
+                bridge.addMember(startJoint, endJoint);
+            }
+            setMode(new MemberStartMode());
+        }
+    }
+    class SelectStartMode extends MouseAdapter implements Mode {
+        @Override
+        public void mouseMoved(MouseEvent e) {
+            Joint closest = bridge.getClosestJoint(e.getX(), e.getY(), HIGHLIGHT_TOLERANCE);
+            if (closest != null) {
+                bridgeCanvas.highlighted.add(closest);
+            }
+        }
+        @Override
+        public void mousePressed(MouseEvent e) {
+            bridgeCanvas.selected.clear();
+            Joint closest = bridge.getClosestJoint(e.getX(), e.getY(), HIGHLIGHT_TOLERANCE);
+            if (closest == null) {
+                setMode(new SelectMembersEndMode(e.getX(), e.getY()));
+
+            } else {
+                bridgeCanvas.selected.add(closest);
+                setMode(new SelectJointEndMode(closest));
+            }
+        }
+    }
+    class SelectJointEndMode extends MouseAdapter implements Mode {
+        private Joint startJoint;
+        SelectJointEndMode(Joint startJoint) {
+            this.startJoint = startJoint;
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            bridgeCanvas.selected.add(startJoint);
+            preview = new JointPreview(e.getX(), e.getY(), bridgeCanvas);
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            bridge.moveJoint(startJoint, e.getX(), e.getY());
+            preview = null;
+            setMode(new SelectStartMode());
+        }
+    }
+    class SelectMembersEndMode extends MouseAdapter implements Mode {
+        private int x, y;
+        SelectMembersEndMode(int x, int y) {
+            this.x = x;
+            this.y = y;
+            bridgeCanvas.selected.clear();
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            int x2 = e.getX();
+            int y2 = e.getY();
+            int previewX = Math.min(x, x2);
+            int previewY = Math.min(y, y2);
+            int width = Math.abs(x - x2);
+            int height = Math.abs(y - y2);
+            preview = new SelectPreview(previewX, previewY, width, height);
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            int x2 = e.getX();
+            int y2 = e.getY();
+            int previewX = Math.min(x, x2);
+            int previewY = Math.min(y, y2);
+            int width = Math.abs(x - x2);
+            int height = Math.abs(y - y2);
+            bridgeCanvas.selected.addAll(bridge.getBoundedMembers(previewX, previewY, width, height));
+            preview = null;
+            setMode(new SelectStartMode());
+        }
+    }
+    class EraseMode extends MouseAdapter implements Mode { }
+
+    private Mode mode = new SelectStartMode();
+    private Shape preview;
+
+    // Adapted from PaintE.java
+    private class Mouse extends MouseAdapter {
+        @Override
+        public void mouseMoved(MouseEvent arg0) {
+            mode.mouseMoved(arg0);
+            bridgeCanvas.repaint();
+        }
+        @Override
+        public void mousePressed(MouseEvent arg0) {
+            mode.mousePressed(arg0);
+            bridgeCanvas.repaint();
+        }
+        public void mouseDragged(MouseEvent arg0) {
+            mode.mouseDragged(arg0);
+            bridgeCanvas.repaint();
+        }
+        @Override
+        public void mouseReleased(MouseEvent arg0) {
+            mode.mouseReleased(arg0);
+            bridgeCanvas.repaint();
+        }
+    }
+    private final MainFrame frame;
 
     public GamePanel(MainFrame frame) {
-        this.gameManager = new GameManager();
+        this.frame = frame;
+        this.bridge = new Bridge();
 
         setLayout(new BorderLayout());
-        // Background Panel
-        JPanel backgroundPanel = new JPanel() {
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                // Load and draw the background image
-                ImageIcon background = new ImageIcon("polybridge/");
-                g.drawImage(background.getImage(), 0, 0, getWidth(), getHeight(), this);
-            }
-        };
-        backgroundPanel.setLayout(new BorderLayout());
-        add(backgroundPanel, BorderLayout.CENTER);
+        add(createToolbar(), BorderLayout.NORTH);
+        add(createMemberDetailsPanel(), BorderLayout.EAST);
 
-        // Top Toolbar
+        // BridgeCanvas & Modes adapted from PaintE.java
+        this.bridgeCanvas = new BridgeCanvas();
+        add(this.bridgeCanvas, BorderLayout.CENTER);
+
+    }
+
+    public JPanel createToolbar() {
         JPanel toolbar = new JPanel();
         toolbar.setLayout(new FlowLayout(FlowLayout.LEFT));
         toolbar.setBackground(new Color(200, 200, 200));
@@ -36,6 +208,17 @@ public class GamePanel extends JPanel {
         JButton undoButton = new JButton("Undo");
         JButton testBridgeButton = new JButton("Test Bridge");
 
+        placeJointButton.addActionListener(e -> setMode(new JointMode()));
+        placeMemberButton.addActionListener(e -> setMode(new MemberStartMode()));
+        selectToolButton.addActionListener(e -> setMode(new SelectStartMode()));
+        eraseToolButton.addActionListener(e -> setMode(new EraseMode()));
+        undoButton.addActionListener(e ->
+                JOptionPane.showMessageDialog(frame, "TODO: implement undo")
+        );
+        testBridgeButton.addActionListener(e ->
+                JOptionPane.showMessageDialog(frame, "TODO: implement simulation of bridge")
+        );
+
         toolbar.add(placeJointButton);
         toolbar.add(placeMemberButton);
         toolbar.add(selectToolButton);
@@ -45,14 +228,10 @@ public class GamePanel extends JPanel {
         // Test Bridge Button in Top-Right Corner
         toolbar.add(Box.createHorizontalGlue());
         toolbar.add(testBridgeButton);
+        return toolbar;
+    }
 
-        add(toolbar, BorderLayout.NORTH);
-
-        // Bridge Canvas (Interactive Area)
-        BridgeCanvas canvas = new BridgeCanvas(gameManager);
-        backgroundPanel.add(canvas, BorderLayout.CENTER);
-
-        // Right Panel (Member Details)
+    public JPanel createMemberDetailsPanel() {
         JPanel memberDetailsPanel = new JPanel();
         memberDetailsPanel.setLayout(new BoxLayout(memberDetailsPanel, BoxLayout.Y_AXIS));
         memberDetailsPanel.setPreferredSize(new Dimension(200, 0));
@@ -62,21 +241,87 @@ public class GamePanel extends JPanel {
         memberDetails.setEditable(false);
         JScrollPane memberDetailsScroll = new JScrollPane(memberDetails);
         memberDetailsPanel.add(memberDetailsScroll);
+        return memberDetailsPanel;
+    }
 
-        add(memberDetailsPanel, BorderLayout.EAST);
+    private class BridgeCanvas extends JPanel {
+        private static final String BACKGROUND_IMAGE = "files/polybridge/background.jpg";
+        private static BufferedImage backgroundImg;
 
-        // Button Actions
-        placeJointButton.addActionListener(e -> canvas.setMode("placeJoint"));
-        placeMemberButton.addActionListener(e -> canvas.setMode("placeMember"));
-        selectToolButton.addActionListener(e -> canvas.setMode("select"));
-        eraseToolButton.addActionListener(e -> canvas.setMode("erase"));
-        undoButton.addActionListener(e -> canvas.undoLastAction());
-        testBridgeButton.addActionListener(e -> {
-            gameManager.simulate();
-            String message = gameManager.isSimulationSuccess()
-                    ? "The car successfully crossed the bridge!"
-                    : "The bridge collapsed!";
-            JOptionPane.showMessageDialog(frame, message);
-        });
+        public static final int CANVAS_WIDTH = 600;
+        public static final int CANVAS_HEIGHT = 400;
+
+        public ArrayList<BridgeComponent> selected = new ArrayList<>();
+        public ArrayList<BridgeComponent> highlighted = new ArrayList<>();
+
+
+        public BridgeCanvas() {
+            super();
+            setBackground(Color.WHITE);
+            try {
+                backgroundImg = ImageIO.read(new File(BACKGROUND_IMAGE));
+            } catch (IOException e) {
+                //TODO: create background image
+                // throw new RuntimeException("Failed to read BridgeCanvas BACKGROUND_IMAGE: " + e);
+            }
+            Mouse mouseListener = new Mouse();
+            addMouseListener(mouseListener); // press/release events
+            addMouseMotionListener(mouseListener); // dragged events
+
+            // switching tools, delete functionality
+            setFocusable(true);
+            addKeyListener(new KeyAdapter() {
+                public void keyPressed(KeyEvent e) {
+                    if (5 == 5) {
+                        bridge.removeBridgeComponents(selected);
+                        System.out.println("Removing all from " + selected);
+                    }
+                }
+
+
+                public void keyReleased(KeyEvent e) {
+                    System.out.println("released");
+                }
+            });
+
+        }
+        @Override
+        public void paintComponent(Graphics gc) {
+            super.paintComponent(gc);
+            List<BridgeComponent> toHighlight = new ArrayList<>(highlighted);
+            toHighlight.addAll(selected);
+            highlighted.clear();
+
+            bridge.setHighlighted(toHighlight);
+
+            // Draw Background
+            if (backgroundImg != null) {
+                gc.drawImage(backgroundImg, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, null);
+            }
+
+            for (BridgeComponent bc : bridge.getCompiledBridgeComponents()) {
+                bc.draw(gc);
+            }
+            if (preview != null) {
+                preview.draw(gc);
+            }
+
+        }
+
+        @Override
+        public Dimension getPreferredSize() {
+            return new Dimension(CANVAS_WIDTH, CANVAS_HEIGHT);
+        }
+    }
+
+    private void setMode(Mode m) {
+        // clear selected BridgeComponents if switching to non-select mode
+        if (m.getClass() != SelectStartMode.class) {
+            bridgeCanvas.selected.clear();
+        }
+        System.out.println("Mode updating to " + m);
+        mode = m;
+        preview = null;
+        bridgeCanvas.repaint();
     }
 }

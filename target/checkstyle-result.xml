@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="9.2.1">
+<file name="G:\My Drive\CIS 1200\hw09_local\src\main\java\org\cis1200\polybridge\GamePanel.java">
+</file>
+<file name="G:\My Drive\CIS 1200\hw09_local\src\main\java\org\cis1200\polybridge\Bridge.java">
+</file>
+<file name="G:\My Drive\CIS 1200\hw09_local\src\main\java\org\cis1200\polybridge\Joint.java">
+</file>
+<file name="G:\My Drive\CIS 1200\hw09_local\src\main\java\org\cis1200\polybridge\JointPreview.java">
+</file>
+<file name="G:\My Drive\CIS 1200\hw09_local\src\main\java\org\cis1200\polybridge\MemberPreview.java">
+</file>
+</checkstyle>
