@@ -68,5 +68,6 @@ public class Joint extends BridgeComponent {
     public String toString() {
         return String.format("Joint: (%d, %d)", getX(), getY());
     }
+
 }
 

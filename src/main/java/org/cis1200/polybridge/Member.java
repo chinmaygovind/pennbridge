@@ -41,4 +41,9 @@ public class Member extends BridgeComponent {
     public int hashCode() {
         return Objects.hash(start, end);
     }
+
+    @Override
+    public String toString() {
+        return String.format("Member | Start: " + getStart() + ", End: " + getEnd());
+    }
 }

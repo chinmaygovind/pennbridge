@@ -8,4 +8,5 @@ public abstract class BridgeComponent extends Shape {
     void setHighlighted(boolean isHighlighted) {
         highlighted = isHighlighted;
     }
+
 }

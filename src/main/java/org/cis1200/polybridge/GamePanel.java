@@ -150,10 +150,10 @@ public class GamePanel extends JPanel {
             int height = Math.abs(y - y2);
             bridgeCanvas.selected.addAll(bridge.getBoundedMembers(previewX, previewY, width, height));
             preview = null;
+            bridgeCanvas.requestFocusInWindow();
             setMode(new SelectStartMode());
         }
     }
-    class EraseMode extends MouseAdapter implements Mode { }
 
     private Mode mode = new SelectStartMode();
     private Shape preview;
@@ -204,17 +204,16 @@ public class GamePanel extends JPanel {
         JButton placeJointButton = new JButton("Place Joint");
         JButton placeMemberButton = new JButton("Place Member");
         JButton selectToolButton = new JButton("Select Tool");
-        JButton eraseToolButton = new JButton("Erase Tool");
         JButton undoButton = new JButton("Undo");
         JButton testBridgeButton = new JButton("Test Bridge");
 
         placeJointButton.addActionListener(e -> setMode(new JointMode()));
         placeMemberButton.addActionListener(e -> setMode(new MemberStartMode()));
         selectToolButton.addActionListener(e -> setMode(new SelectStartMode()));
-        eraseToolButton.addActionListener(e -> setMode(new EraseMode()));
-        undoButton.addActionListener(e ->
-                JOptionPane.showMessageDialog(frame, "TODO: implement undo")
-        );
+        undoButton.addActionListener(e -> {
+            bridge.undo();
+            repaint();
+        });
         testBridgeButton.addActionListener(e ->
                 JOptionPane.showMessageDialog(frame, "TODO: implement simulation of bridge")
         );
@@ -222,7 +221,6 @@ public class GamePanel extends JPanel {
         toolbar.add(placeJointButton);
         toolbar.add(placeMemberButton);
         toolbar.add(selectToolButton);
-        toolbar.add(eraseToolButton);
         toolbar.add(undoButton);
 
         // Test Bridge Button in Top-Right Corner
@@ -272,17 +270,14 @@ public class GamePanel extends JPanel {
             setFocusable(true);
             addKeyListener(new KeyAdapter() {
                 public void keyPressed(KeyEvent e) {
-                    if (5 == 5) {
-                        bridge.removeBridgeComponents(selected);
-                        System.out.println("Removing all from " + selected);
+                    if (e.getKeyCode() == KeyEvent.VK_DELETE) {
+                        bridge.deleteBridgeComponents(selected);
+                        bridgeCanvas.repaint();
+                        selected.clear();
                     }
                 }
-
-
-                public void keyReleased(KeyEvent e) {
-                    System.out.println("released");
-                }
             });
+            requestFocusInWindow();
 
         }
         @Override

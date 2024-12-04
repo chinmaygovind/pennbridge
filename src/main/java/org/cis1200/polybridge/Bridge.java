@@ -3,19 +3,22 @@ package org.cis1200.polybridge;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.function.Predicate;
 
 public class Bridge {
-    private List<Action> actions = new ArrayList<>();
+    private LinkedList<Action> actions = new LinkedList<>();
 
     private List<BridgeComponent> compiledBridgeComponents = new ArrayList<>();
+    private List<BridgeComponent> deletedBridgeComponents = new ArrayList<>();
     private List<Joint> joints = new ArrayList<>();
     private List<Member> members = new ArrayList<>();
 
     interface Action {
         public List<BridgeComponent> getComponents();
         public void applyAction();
+
+        public String toString();
     }
 
     class AddAction implements Action {
@@ -31,6 +34,11 @@ public class Bridge {
         @Override
         public void applyAction() {
             compiledBridgeComponents.addAll(bridgeComponents);
+        }
+
+        @Override
+        public String toString() {
+            return "Adding " + getComponents();
         }
     }
 
@@ -49,26 +57,37 @@ public class Bridge {
 
         @Override
         public void applyAction() {
-            System.out.printf("Updating joint from %s to (%d, %d)", oldJoint, newX, newY);
+            //System.out.printf("Updating joint from %s to (%d, %d)\n", oldJoint, newX, newY);
             for (BridgeComponent bc : compiledBridgeComponents) {
                 if (bc.getClass() == Joint.class && bc.equals(oldJoint)) {
                     ((Joint) bc).move(newX, newY);
+                    return;
                 }
             }
+        }
+
+        @Override
+        public String toString() {
+            return String.format("Updating joint from %s to (%d, %d)", oldJoint, newX, newY);
         }
     }
     class DeleteAction implements Action {
         List<BridgeComponent> bridgeComponents;
 
         public DeleteAction(List<BridgeComponent> bridgeComponents) {
-            this.bridgeComponents = bridgeComponents;
+            this.bridgeComponents = new ArrayList<>(bridgeComponents);
         }
         public List<BridgeComponent> getComponents() {
             return bridgeComponents;
         }
         @Override
         public void applyAction() {
-            compiledBridgeComponents.removeAll(bridgeComponents);
+            deletedBridgeComponents.addAll(bridgeComponents);
+        }
+
+        @Override
+        public String toString() {
+            return "Deleting " + getComponents();
         }
     }
 
@@ -106,16 +125,31 @@ public class Bridge {
         }
     }
 
-    public void removeBridgeComponents(List<BridgeComponent> bridgeComponents) {
-        Action delete = new DeleteAction(bridgeComponents);
-        actions.add(delete);
-        compileActions();
+    public void deleteBridgeComponents(List<BridgeComponent> bridgeComponents) {
+        if (!bridgeComponents.isEmpty()) {
+            Action delete = new DeleteAction(bridgeComponents);
+            actions.add(delete);
+            compileActions();
+        }
+    }
+
+    public void undo() {
+        if (!actions.isEmpty()) {
+            actions.removeLast();
+            compileActions();
+        }
     }
 
     private void compileActions() {
         compiledBridgeComponents.clear();
+        deletedBridgeComponents.clear();
+        System.out.println("-----------COMPILING BRIDGE----------------");
         for (Action a : actions) {
             a.applyAction();
+            System.out.println(a);
+        }
+        for (BridgeComponent bc : deletedBridgeComponents) {
+            compiledBridgeComponents.remove(bc);
         }
         // remove members if their joints are missing
         compiledBridgeComponents.removeIf(bridgeComponent ->
@@ -124,6 +158,9 @@ public class Bridge {
                         (((Member) bridgeComponent).getStart() == null ||
                         ((Member) bridgeComponent).getEnd() == null))
         );
+
+        joints.clear();
+        members.clear();
         for (BridgeComponent bc : compiledBridgeComponents) {
             if (bc.getClass() == Joint.class) {
                 joints.add((Joint) bc);
@@ -173,7 +210,6 @@ public class Bridge {
         return members;
     }
     public List<BridgeComponent> getCompiledBridgeComponents() {
-        this.compileActions();
         return compiledBridgeComponents;
     }
 
