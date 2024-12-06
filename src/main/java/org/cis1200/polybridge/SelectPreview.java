@@ -1,5 +1,7 @@
 package org.cis1200.polybridge;
 
+import org.cis1200.polybridge.components.Shape;
+
 import java.awt.*;
 
 public class SelectPreview extends Shape {

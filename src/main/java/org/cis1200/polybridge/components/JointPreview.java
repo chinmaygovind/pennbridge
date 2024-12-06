@@ -1,9 +1,10 @@
-package org.cis1200.polybridge;
+package org.cis1200.polybridge.components;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Point2D;
 
-import static org.cis1200.polybridge.Joint.JOINT_RADIUS;
+import static org.cis1200.polybridge.components.Joint.JOINT_RADIUS;
 
 public class JointPreview extends BridgeComponent {
 
@@ -25,8 +26,9 @@ public class JointPreview extends BridgeComponent {
 
     public void draw(Graphics gc0) {
         // snap to grid
-        int snappedX = (int) Math.round(this.x / 20.0) * 20;
-        int snappedY = (int) Math.round(this.y / 20.0) * 20;
+        Point2D snapped = Joint.getSnappedPoint(this.x, this.y);
+        int snappedX = (int) snapped.getX();
+        int snappedY = (int) snapped.getY();
         Graphics2D gc = (Graphics2D) gc0;
         //draw horizontal and vertical line
         gc.setColor(Color.BLACK);

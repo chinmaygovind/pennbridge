@@ -1,11 +1,8 @@
-package org.cis1200.polybridge;
-
-import javax.swing.*;
-import java.awt.*;
+package org.cis1200.polybridge.components;
 
 public abstract class BridgeComponent extends Shape {
     boolean highlighted;
-    void setHighlighted(boolean isHighlighted) {
+    public void setHighlighted(boolean isHighlighted) {
         highlighted = isHighlighted;
     }
 

@@ -1,4 +1,9 @@
-package org.cis1200.polybridge;
+package org.cis1200.polybridge.truss;
+
+import org.cis1200.polybridge.components.BridgeComponent;
+import org.cis1200.polybridge.components.Joint;
+import org.cis1200.polybridge.components.Member;
+import org.cis1200.polybridge.components.PrebuiltJoint;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -92,6 +97,14 @@ public class Bridge {
     }
 
     public Bridge() {
+        addPrebuiltJoints();
+    }
+
+    public void addPrebuiltJoints() {
+        List<BridgeComponent> bcList = new ArrayList<>(PrebuiltJoint.BRIDGE_BUILTINS);
+        Action add = new AddAction(bcList);
+        actions.add(add);
+        compileActions();
     }
 
     public void addJoint(int x, int y) {
@@ -134,7 +147,7 @@ public class Bridge {
     }
 
     public void undo() {
-        if (!actions.isEmpty()) {
+        if (actions.size() > 1) {
             actions.removeLast();
             compileActions();
         }
@@ -154,7 +167,7 @@ public class Bridge {
         // remove members if their joints are missing
         compiledBridgeComponents.removeIf(bridgeComponent ->
                 (bridgeComponent == null) ||
-                (bridgeComponent.getClass() == Member.class &&
+                (bridgeComponent instanceof Member &&
                         (((Member) bridgeComponent).getStart() == null ||
                         ((Member) bridgeComponent).getEnd() == null))
         );
@@ -162,9 +175,9 @@ public class Bridge {
         joints.clear();
         members.clear();
         for (BridgeComponent bc : compiledBridgeComponents) {
-            if (bc.getClass() == Joint.class) {
+            if (bc instanceof Joint) {
                 joints.add((Joint) bc);
-            } else if (bc.getClass() == Member.class) {
+            } else if (bc instanceof Member) {
                 members.add((Member) bc);
             }
         }
@@ -211,6 +224,13 @@ public class Bridge {
     }
     public List<BridgeComponent> getCompiledBridgeComponents() {
         return compiledBridgeComponents;
+    }
+
+    public boolean isRigid() {
+        // 2 * (# of joints) = (# of reaction forces) + (# of members)
+        // 2 * # of joints = 3 + # of members
+        compileActions();
+        return 2 * joints.size() == 3 + members.size();
     }
 
 }

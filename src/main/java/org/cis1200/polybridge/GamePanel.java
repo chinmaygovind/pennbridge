@@ -1,5 +1,9 @@
 package org.cis1200.polybridge;
 
+import org.cis1200.polybridge.components.*;
+import org.cis1200.polybridge.components.Shape;
+import org.cis1200.polybridge.truss.Bridge;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -28,7 +32,7 @@ public class GamePanel extends JPanel {
         }
         @Override
         public void mouseMoved(MouseEvent e) {
-            // System.out.println("Previewing joint at " + e.getX() + ", " + e.getY());
+            System.out.println("Previewing joint at " + e.getX() + ", " + e.getY());
             preview = new JointPreview(e.getX(), e.getY(), bridgeCanvas);
         }
 
@@ -45,7 +49,9 @@ public class GamePanel extends JPanel {
         @Override
         public void mouseMoved(MouseEvent e) {
             Joint j = bridge.getClosestJoint(e.getX(), e.getY(), HIGHLIGHT_TOLERANCE);
-            if (j != null) bridgeCanvas.highlighted.add(j);
+            if (j != null) {
+                bridgeCanvas.highlighted.add(j);
+            }
         }
 
         @Override
@@ -96,7 +102,7 @@ public class GamePanel extends JPanel {
             if (closest == null) {
                 setMode(new SelectMembersEndMode(e.getX(), e.getY()));
 
-            } else {
+            } else if (!(closest instanceof PrebuiltJoint)) {
                 bridgeCanvas.selected.add(closest);
                 setMode(new SelectJointEndMode(closest));
             }
@@ -148,7 +154,9 @@ public class GamePanel extends JPanel {
             int previewY = Math.min(y, y2);
             int width = Math.abs(x - x2);
             int height = Math.abs(y - y2);
-            bridgeCanvas.selected.addAll(bridge.getBoundedMembers(previewX, previewY, width, height));
+            bridgeCanvas.selected.addAll(
+                    bridge.getBoundedMembers(previewX, previewY, width, height)
+            );
             preview = null;
             bridgeCanvas.requestFocusInWindow();
             setMode(new SelectStartMode());
@@ -243,14 +251,14 @@ public class GamePanel extends JPanel {
     }
 
     private class BridgeCanvas extends JPanel {
-        private static final String BACKGROUND_IMAGE = "files/polybridge/background.jpg";
+        private static final String BACKGROUND_IMAGE = "files/polybridge/background.png";
         private static BufferedImage backgroundImg;
 
         public static final int CANVAS_WIDTH = 600;
         public static final int CANVAS_HEIGHT = 400;
 
-        public ArrayList<BridgeComponent> selected = new ArrayList<>();
-        public ArrayList<BridgeComponent> highlighted = new ArrayList<>();
+        private ArrayList<BridgeComponent> selected = new ArrayList<>();
+        private ArrayList<BridgeComponent> highlighted = new ArrayList<>();
 
 
         public BridgeCanvas() {
@@ -259,8 +267,7 @@ public class GamePanel extends JPanel {
             try {
                 backgroundImg = ImageIO.read(new File(BACKGROUND_IMAGE));
             } catch (IOException e) {
-                //TODO: create background image
-                // throw new RuntimeException("Failed to read BridgeCanvas BACKGROUND_IMAGE: " + e);
+                throw new RuntimeException("Failed to read BridgeCanvas BACKGROUND_IMAGE: " + e);
             }
             Mouse mouseListener = new Mouse();
             addMouseListener(mouseListener); // press/release events
@@ -291,7 +298,7 @@ public class GamePanel extends JPanel {
 
             // Draw Background
             if (backgroundImg != null) {
-                gc.drawImage(backgroundImg, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT, null);
+                gc.drawImage(backgroundImg, 0, 0, getWidth(), getHeight(), null);
             }
 
             for (BridgeComponent bc : bridge.getCompiledBridgeComponents()) {

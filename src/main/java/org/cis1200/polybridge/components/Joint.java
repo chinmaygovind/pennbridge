@@ -1,17 +1,19 @@
-package org.cis1200.polybridge;
+package org.cis1200.polybridge.components;
 
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Objects;
 
 public class Joint extends BridgeComponent {
     private LinkedList<Point> pointHistory;
-    public static final int JOINT_RADIUS = 5;
+    public static final int JOINT_RADIUS = 4;
 
     public Joint(int x, int y) {
-        int snappedX = (int) Math.round(x / 20.0) * 20;
-        int snappedY = (int) Math.round(y / 20.0) * 20;
+        Point snapped = getSnappedPoint(x, y);
+        int snappedX = (int) snapped.getX();
+        int snappedY = (int) snapped.getY();
         pointHistory = new LinkedList<>(Collections.singletonList(new Point(snappedX, snappedY)));
     }
 
@@ -27,8 +29,8 @@ public class Joint extends BridgeComponent {
     }
 
     public static Point getSnappedPoint(int x, int y) {
-        int snappedX = (int) Math.round(x / 20.0) * 20;
-        int snappedY = (int) Math.round(y / 20.0) * 20;
+        int snappedX = (int) Math.round(x / 25.0) * 25;
+        int snappedY = (int) Math.round(y / 25.0) * 25;
         return new Point(snappedX, snappedY);
     }
 
@@ -53,8 +55,12 @@ public class Joint extends BridgeComponent {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Joint joint = (Joint) o;
         return getX() == joint.getX() && getY() == joint.getY();
     }

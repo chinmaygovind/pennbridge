@@ -25,9 +25,9 @@ under the License.
     <language>en-us</language>
     <copyright>&#169;2024</copyright>
     <item>
-      <title>File: 5,
+      <title>File: 3,
              Errors: 0,
-             Warnings: 0,
+             Warnings: 3,
              Infos: 0
       </title>
             <link>https://www.seas.upenn.edu/~cis120/current/hw/hw09//checkstyle.html</link>
@@ -46,27 +46,13 @@ under the License.
           <tbody>
                           <tr>
                 <td>
-                  <a href="https://www.seas.upenn.edu/~cis120/current/hw/hw09//checkstyle.html#org.cis1200.polybridge.JointPreview.java">org/cis1200/polybridge/JointPreview.java</a>
+                  <a href="https://www.seas.upenn.edu/~cis120/current/hw/hw09//checkstyle.html#org.cis1200.polybridge.PrebuiltJoint.java">org/cis1200/polybridge/PrebuiltJoint.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://www.seas.upenn.edu/~cis120/current/hw/hw09//checkstyle.html#org.cis1200.polybridge.MemberPreview.java">org/cis1200/polybridge/MemberPreview.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
+                  2
                 </td>
                 <td>
                   0
@@ -94,21 +80,7 @@ under the License.
                   0
                 </td>
                 <td>
-                  0
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://www.seas.upenn.edu/~cis120/current/hw/hw09//checkstyle.html#org.cis1200.polybridge.Joint.java">org/cis1200/polybridge/Joint.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  0
+                  1
                 </td>
                 <td>
                   0

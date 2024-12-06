@@ -1,4 +1,4 @@
-package org.cis1200.polybridge;
+package org.cis1200.polybridge.components;
 
 import java.awt.*;
 import java.util.Objects;
@@ -31,8 +31,12 @@ public class Member extends BridgeComponent {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Member member = (Member) o;
         return Objects.equals(start, member.start) && Objects.equals(end, member.end);
     }
