@@ -21,8 +21,11 @@ public class MemberPreview extends BridgeComponent {
         Graphics2D gc = (Graphics2D) gc0;
         gc.setColor(Color.GRAY);
         gc.setStroke(
-                new BasicStroke(1.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER,
-                        10.0f, new float[]{10.0f}, 0.0f));
+                new BasicStroke(
+                        1.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER,
+                        10.0f, new float[] { 10.0f }, 0.0f
+                )
+        );
         gc.drawLine(getStart().getX(), getStart().getY(), endX, endY);
 
     }

@@ -13,17 +13,17 @@ public class HelpPanel extends JPanel {
 
         JTextArea instructions = new JTextArea();
         instructions.setText("""
-            Welcome to Bridge Builder Game!
-            
-            1. Use your mouse to place bridge nodes and connect them with segments.
-            2. Press the "Simulate" button to test if your bridge can support the car.
-            3. If the car successfully crosses, you win!
-            4. If the bridge collapses, adjust your design and try again.
+                Welcome to Bridge Builder Game!
 
-            Tips:
-            - Use triangles for better structural stability.
-            - Watch out for uneven weight distribution!
-            """);
+                1. Use your mouse to place bridge nodes and connect them with segments.
+                2. Press the "Simulate" button to test if your bridge can support the car.
+                3. If the car successfully crosses, you win!
+                4. If the bridge collapses, adjust your design and try again.
+
+                Tips:
+                - Use triangles for better structural stability.
+                - Watch out for uneven weight distribution!
+                """);
         instructions.setEditable(false);
         instructions.setLineWrap(true);
         instructions.setWrapStyleWord(true);

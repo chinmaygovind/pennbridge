@@ -25,9 +25,9 @@ under the License.
     <language>en-us</language>
     <copyright>&#169;2024</copyright>
     <item>
-      <title>File: 3,
+      <title>File: 2,
              Errors: 0,
-             Warnings: 3,
+             Warnings: 0,
              Infos: 0
       </title>
             <link>https://www.seas.upenn.edu/~cis120/current/hw/hw09//checkstyle.html</link>
@@ -46,21 +46,7 @@ under the License.
           <tbody>
                           <tr>
                 <td>
-                  <a href="https://www.seas.upenn.edu/~cis120/current/hw/hw09//checkstyle.html#org.cis1200.polybridge.PrebuiltJoint.java">org/cis1200/polybridge/PrebuiltJoint.java</a>
-                </td>
-                <td>
-                  0
-                </td>
-                <td>
-                  2
-                </td>
-                <td>
-                  0
-                </td>
-              </tr>
-                          <tr>
-                <td>
-                  <a href="https://www.seas.upenn.edu/~cis120/current/hw/hw09//checkstyle.html#org.cis1200.polybridge.Bridge.java">org/cis1200/polybridge/Bridge.java</a>
+                  <a href="https://www.seas.upenn.edu/~cis120/current/hw/hw09//checkstyle.html#org.cis1200.polybridge.components.Traveler.java">org/cis1200/polybridge/components/Traveler.java</a>
                 </td>
                 <td>
                   0
@@ -74,13 +60,13 @@ under the License.
               </tr>
                           <tr>
                 <td>
-                  <a href="https://www.seas.upenn.edu/~cis120/current/hw/hw09//checkstyle.html#org.cis1200.polybridge.GamePanel.java">org/cis1200/polybridge/GamePanel.java</a>
+                  <a href="https://www.seas.upenn.edu/~cis120/current/hw/hw09//checkstyle.html#org.cis1200.polybridge.truss.Vec2D.java">org/cis1200/polybridge/truss/Vec2D.java</a>
                 </td>
                 <td>
                   0
                 </td>
                 <td>
-                  1
+                  0
                 </td>
                 <td>
                   0

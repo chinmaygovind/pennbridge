@@ -7,6 +7,8 @@ public class Vec2D {
     private double x;
     private double y;
 
+    public static final Vec2D ZERO = new Vec2D(0, 0);
+
     public Vec2D(int x, int y) {
         this.x = x;
         this.y = y;
@@ -37,10 +39,15 @@ public class Vec2D {
     public Vec2D add(Vec2D o) {
         return new Vec2D(getX() + o.getX(), getY() + o.getY());
     }
+
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         Vec2D vec2D = (Vec2D) o;
         return Double.compare(x, vec2D.x) == 0 && Double.compare(y, vec2D.y) == 0;
     }

@@ -1,7 +1,6 @@
 package org.cis1200.polybridge.components;
 
 import java.awt.*;
-import java.awt.geom.Point2D;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Objects;
@@ -20,6 +19,7 @@ public class Joint extends BridgeComponent {
     public int getX() {
         return (int) getPoint().getX();
     }
+
     public int getY() {
         return (int) getPoint().getY();
     }
@@ -43,14 +43,18 @@ public class Joint extends BridgeComponent {
         if (highlighted) {
             gc.setColor(Color.GRAY);
             gc.setStroke(new BasicStroke(3));
-            gc.fillOval(getX() - JOINT_RADIUS, getY() - JOINT_RADIUS,
-                    2 * JOINT_RADIUS, 2 * JOINT_RADIUS);
+            gc.fillOval(
+                    getX() - JOINT_RADIUS, getY() - JOINT_RADIUS,
+                    2 * JOINT_RADIUS, 2 * JOINT_RADIUS
+            );
 
         }
         gc.setColor(Color.BLUE);
         gc.setStroke(new BasicStroke(3));
-        gc.drawOval(getX() - JOINT_RADIUS, getY() - JOINT_RADIUS,
-                2 * JOINT_RADIUS, 2 * JOINT_RADIUS);
+        gc.drawOval(
+                getX() - JOINT_RADIUS, getY() - JOINT_RADIUS,
+                2 * JOINT_RADIUS, 2 * JOINT_RADIUS
+        );
     }
 
     @Override
@@ -58,7 +62,7 @@ public class Joint extends BridgeComponent {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()) {
+        if (!(o instanceof Joint)) {
             return false;
         }
         Joint joint = (Joint) o;
@@ -76,4 +80,3 @@ public class Joint extends BridgeComponent {
     }
 
 }
-

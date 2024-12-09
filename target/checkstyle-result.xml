@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <checkstyle version="9.2.1">
-<file name="G:\My Drive\CIS 1200\hw09_local\src\main\java\org\cis1200\polybridge\GamePanel.java">
-<error line="101" column="60" severity="warning" message="WhitespaceAround: &apos;{&apos; is not preceded with whitespace." source="com.puppycrawl.tools.checkstyle.checks.whitespace.WhitespaceAroundCheck"/>
+<file name="G:\My Drive\CIS 1200\hw09_local\src\main\java\org\cis1200\polybridge\components\Traveler.java">
 </file>
-<file name="G:\My Drive\CIS 1200\hw09_local\src\main\java\org\cis1200\polybridge\Bridge.java">
-</file>
-<file name="G:\My Drive\CIS 1200\hw09_local\src\main\java\org\cis1200\polybridge\PrebuiltJoint.java">
-<error line="11" column="39" severity="warning" message="Name &apos;BRIDGE_BUILTINS&apos; must match pattern &apos;^[a-z][a-zA-Z0-9]*$&apos;." source="com.puppycrawl.tools.checkstyle.checks.naming.StaticVariableNameCheck"/>
-<error line="11" column="39" severity="warning" message="Variable &apos;BRIDGE_BUILTINS&apos; must be private and have accessor methods." source="com.puppycrawl.tools.checkstyle.checks.design.VisibilityModifierCheck"/>
+<file name="G:\My Drive\CIS 1200\hw09_local\src\main\java\org\cis1200\polybridge\truss\Vec2D.java">
 </file>
 </checkstyle>

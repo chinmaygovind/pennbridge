@@ -8,6 +8,7 @@ public class TrussMember {
     private TrussJoint end;
     private Member member;
     private double load;
+
     public TrussMember(TrussJoint start, TrussJoint end, Member m) {
         this.start = start;
         this.end = end;

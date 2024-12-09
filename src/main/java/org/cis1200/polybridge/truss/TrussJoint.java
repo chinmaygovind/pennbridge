@@ -21,7 +21,7 @@ public class TrussJoint {
     }
 
     public TrussJoint(Joint j) {
-        this.position = Truss.toTrussCoords(j.getPoint());
+        this(Truss.toTrussCoords(j.getPoint()));
     }
 
     public Vec2D getPosition() {
@@ -43,6 +43,7 @@ public class TrussJoint {
     public Vec2D getLoadForce() {
         return loadForce;
     }
+
     public void setReactionForce(Vec2D reactionForce) {
         this.reactionForce = reactionForce;
     }
@@ -66,8 +67,12 @@ public class TrussJoint {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         TrussJoint that = (TrussJoint) o;
         return Objects.equals(position, that.position);
     }

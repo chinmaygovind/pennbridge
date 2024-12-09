@@ -20,6 +20,7 @@ public class JointPreview extends BridgeComponent {
     public int getX() {
         return x;
     }
+
     public int getY() {
         return y;
     }
@@ -30,14 +31,15 @@ public class JointPreview extends BridgeComponent {
         int snappedX = (int) snapped.getX();
         int snappedY = (int) snapped.getY();
         Graphics2D gc = (Graphics2D) gc0;
-        //draw horizontal and vertical line
+        // draw horizontal and vertical line
         gc.setColor(Color.BLACK);
         gc.setStroke(new BasicStroke(1));
         gc.drawLine(0, snappedY, (int) canvas.getSize().getWidth(), snappedY);
         gc.drawLine(snappedX, 0, snappedX, (int) canvas.getSize().getHeight());
         gc.setStroke(new BasicStroke(3));
-        gc.drawOval(snappedX - JOINT_RADIUS, snappedY - JOINT_RADIUS,
-                2 * JOINT_RADIUS, 2 * JOINT_RADIUS);
+        gc.drawOval(
+                snappedX - JOINT_RADIUS, snappedY - JOINT_RADIUS,
+                2 * JOINT_RADIUS, 2 * JOINT_RADIUS
+        );
     }
 }
-

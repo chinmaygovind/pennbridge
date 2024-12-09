@@ -2,37 +2,49 @@ package org.cis1200.polybridge;
 
 import org.cis1200.polybridge.components.*;
 import org.cis1200.polybridge.components.Shape;
-import org.cis1200.polybridge.truss.Bridge;
+import org.cis1200.polybridge.components.Bridge;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.InvalidPathException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GamePanel extends JPanel {
 
-    private final Bridge bridge;
+    private Bridge bridge;
     private final BridgeCanvas bridgeCanvas;
+
+    public static final String BACKGROUND_IMAGE = "files/polybridge/background.png";
+
+    private final MemberDetailsPanel memberDetailsPanel;
 
     private static final int HIGHLIGHT_TOLERANCE = 20;
 
-    interface Mode extends MouseListener, MouseMotionListener { }
+    interface Mode extends MouseListener, MouseMotionListener {
+    }
+
     class JointMode extends MouseAdapter implements Mode {
         Mode previousMode;
+
         public JointMode() {
             this.previousMode = this;
         }
+
         public JointMode(Mode previousMode) {
             this.previousMode = previousMode;
         }
+
         @Override
         public void mouseMoved(MouseEvent e) {
-            System.out.println("Previewing joint at " + e.getX() + ", " + e.getY());
+            // System.out.println("Previewing joint at " + e.getX() + ", " + e.getY());
             preview = new JointPreview(e.getX(), e.getY(), bridgeCanvas);
         }
 
@@ -67,6 +79,7 @@ public class GamePanel extends JPanel {
     class MemberEndMode extends MouseAdapter implements Mode {
 
         private final Joint startJoint;
+
         public MemberEndMode(Joint startJoint) {
             this.startJoint = startJoint;
         }
@@ -84,9 +97,11 @@ public class GamePanel extends JPanel {
             if (endJoint != null && endJoint != startJoint) {
                 bridge.addMember(startJoint, endJoint);
             }
+            memberDetailsPanel.updateMemberList();
             setMode(new MemberStartMode());
         }
     }
+
     class SelectStartMode extends MouseAdapter implements Mode {
         @Override
         public void mouseMoved(MouseEvent e) {
@@ -95,6 +110,7 @@ public class GamePanel extends JPanel {
                 bridgeCanvas.highlighted.add(closest);
             }
         }
+
         @Override
         public void mousePressed(MouseEvent e) {
             bridgeCanvas.selected.clear();
@@ -108,8 +124,10 @@ public class GamePanel extends JPanel {
             }
         }
     }
+
     class SelectJointEndMode extends MouseAdapter implements Mode {
         private Joint startJoint;
+
         SelectJointEndMode(Joint startJoint) {
             this.startJoint = startJoint;
         }
@@ -127,8 +145,10 @@ public class GamePanel extends JPanel {
             setMode(new SelectStartMode());
         }
     }
+
     class SelectMembersEndMode extends MouseAdapter implements Mode {
         private int x, y;
+
         SelectMembersEndMode(int x, int y) {
             this.x = x;
             this.y = y;
@@ -173,21 +193,25 @@ public class GamePanel extends JPanel {
             mode.mouseMoved(arg0);
             bridgeCanvas.repaint();
         }
+
         @Override
         public void mousePressed(MouseEvent arg0) {
             mode.mousePressed(arg0);
             bridgeCanvas.repaint();
         }
+
         public void mouseDragged(MouseEvent arg0) {
             mode.mouseDragged(arg0);
             bridgeCanvas.repaint();
         }
+
         @Override
         public void mouseReleased(MouseEvent arg0) {
             mode.mouseReleased(arg0);
             bridgeCanvas.repaint();
         }
     }
+
     private final MainFrame frame;
 
     public GamePanel(MainFrame frame) {
@@ -196,7 +220,8 @@ public class GamePanel extends JPanel {
 
         setLayout(new BorderLayout());
         add(createToolbar(), BorderLayout.NORTH);
-        add(createMemberDetailsPanel(), BorderLayout.EAST);
+        this.memberDetailsPanel = new MemberDetailsPanel();
+        add(memberDetailsPanel, BorderLayout.EAST);
 
         // BridgeCanvas & Modes adapted from PaintE.java
         this.bridgeCanvas = new BridgeCanvas();
@@ -214,16 +239,75 @@ public class GamePanel extends JPanel {
         JButton selectToolButton = new JButton("Select Tool");
         JButton undoButton = new JButton("Undo");
         JButton testBridgeButton = new JButton("Test Bridge");
+        JButton saveButton = new JButton("Save Bridge");
+        JButton loadButton = new JButton("Load Bridge");
 
         placeJointButton.addActionListener(e -> setMode(new JointMode()));
         placeMemberButton.addActionListener(e -> setMode(new MemberStartMode()));
         selectToolButton.addActionListener(e -> setMode(new SelectStartMode()));
         undoButton.addActionListener(e -> {
             bridge.undo();
+            memberDetailsPanel.updateMemberList();
             repaint();
         });
-        testBridgeButton.addActionListener(e ->
-                JOptionPane.showMessageDialog(frame, "TODO: implement simulation of bridge")
+
+        final JFileChooser fc = new JFileChooser("files/polybridge/bridges");
+        fc.setAcceptAllFileFilterUsed(false);
+        fc.addChoosableFileFilter(
+                new FileNameExtensionFilter("Bridge file", "bridge")
+        );
+        saveButton.addActionListener(
+                e -> {
+                    int returnVal = fc.showSaveDialog(GamePanel.this);
+                    if (returnVal == JFileChooser.APPROVE_OPTION &&
+                            !fc.getSelectedFile().getName().isEmpty()) {
+                        String fileName = fc.getCurrentDirectory().getAbsolutePath() +
+                                File.separator +
+                                fc.getSelectedFile().getName();
+                        if (!fileName.endsWith(".bridge")) {
+                            fileName += ".bridge";
+                        }
+                        try {
+                            File toSave = new File(fileName);
+                            bridge.saveToFile(toSave);
+                            JOptionPane.showMessageDialog(
+                                    frame,
+                                    "Saved bridge to " + fileName,
+                                    "Success",
+                                    JOptionPane.PLAIN_MESSAGE
+                            );
+                        } catch (IOException | InvalidPathException ioException) {
+                            JOptionPane.showMessageDialog(
+                                    frame,
+                                    "Unable to save bridge to " + fileName,
+                                    "Error",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
+                        }
+                    }
+                }
+        );
+        loadButton.addActionListener(
+                e -> {
+                    int returnVal = fc.showOpenDialog(GamePanel.this);
+
+                    if (returnVal == JFileChooser.APPROVE_OPTION) {
+                        File file = fc.getSelectedFile();
+                        try {
+                            bridge = Bridge.loadFromFile(file);
+                            memberDetailsPanel.updateMemberList();
+                            repaint();
+                        } catch (IOException ex) {
+                            JOptionPane.showMessageDialog(
+                                    frame,
+                                    "Unable to load bridge from " + file.getName(),
+                                    "Error",
+                                    JOptionPane.ERROR_MESSAGE
+                            );
+                            System.out.println(ex);
+                        }
+                    }
+                }
         );
 
         toolbar.add(placeJointButton);
@@ -231,27 +315,54 @@ public class GamePanel extends JPanel {
         toolbar.add(selectToolButton);
         toolbar.add(undoButton);
 
-        // Test Bridge Button in Top-Right Corner
         toolbar.add(Box.createHorizontalGlue());
+        toolbar.add(saveButton);
+        toolbar.add(loadButton);
         toolbar.add(testBridgeButton);
         return toolbar;
     }
 
-    public JPanel createMemberDetailsPanel() {
-        JPanel memberDetailsPanel = new JPanel();
-        memberDetailsPanel.setLayout(new BoxLayout(memberDetailsPanel, BoxLayout.Y_AXIS));
-        memberDetailsPanel.setPreferredSize(new Dimension(200, 0));
-        memberDetailsPanel.setBorder(BorderFactory.createTitledBorder("Bridge Members"));
+    private class MemberDetailsPanel extends JPanel {
 
-        JTextArea memberDetails = new JTextArea();
-        memberDetails.setEditable(false);
-        JScrollPane memberDetailsScroll = new JScrollPane(memberDetails);
-        memberDetailsPanel.add(memberDetailsScroll);
-        return memberDetailsPanel;
+        private JTable memberDetails;
+        private DefaultTableModel model;
+
+        public MemberDetailsPanel() {
+            setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+            setPreferredSize(new Dimension(200, 0));
+            setBorder(BorderFactory.createTitledBorder("Bridge Members"));
+            model = new DefaultTableModel(
+                    new String[] { "#", "Material", "Length", "Axial Force" }, 0
+            );
+            memberDetails = new JTable(model);
+            memberDetails.getColumnModel().getColumn(0).setPreferredWidth(20);
+            memberDetails.getColumnModel().getColumn(3).setPreferredWidth(120);
+            JScrollPane memberDetailsScroll = new JScrollPane(memberDetails);
+            add(memberDetailsScroll);
+        }
+
+        public void updateMemberList() {
+            List<Member> members = bridge.getMembers();
+            model.setRowCount(0);
+            int memberID = 1;
+            for (Member m : members) {
+                m.setNumber(memberID);
+                model.addRow(
+                        new Object[] {
+                            m.getNumber(),
+                            m.getMaterial().toString(),
+                            String.format("%.2f", m.getLength()),
+                            String.format("%.2f", m.getForce())
+                        }
+                );
+                memberID++;
+            }
+            // System.out.println(model.getRowCount() + "x" + model.getColumnCount());
+            memberDetails.repaint();
+        }
     }
 
     private class BridgeCanvas extends JPanel {
-        private static final String BACKGROUND_IMAGE = "files/polybridge/background.png";
         private static BufferedImage backgroundImg;
 
         public static final int CANVAS_WIDTH = 600;
@@ -259,7 +370,6 @@ public class GamePanel extends JPanel {
 
         private ArrayList<BridgeComponent> selected = new ArrayList<>();
         private ArrayList<BridgeComponent> highlighted = new ArrayList<>();
-
 
         public BridgeCanvas() {
             super();
@@ -280,6 +390,7 @@ public class GamePanel extends JPanel {
                     if (e.getKeyCode() == KeyEvent.VK_DELETE) {
                         bridge.deleteBridgeComponents(selected);
                         bridgeCanvas.repaint();
+                        memberDetailsPanel.updateMemberList();
                         selected.clear();
                     }
                 }
@@ -287,6 +398,10 @@ public class GamePanel extends JPanel {
             requestFocusInWindow();
 
         }
+
+        public void simulate() {
+        }
+
         @Override
         public void paintComponent(Graphics gc) {
             super.paintComponent(gc);
@@ -321,7 +436,7 @@ public class GamePanel extends JPanel {
         if (m.getClass() != SelectStartMode.class) {
             bridgeCanvas.selected.clear();
         }
-        System.out.println("Mode updating to " + m);
+        // System.out.println("Mode updating to " + m);
         mode = m;
         preview = null;
         bridgeCanvas.repaint();

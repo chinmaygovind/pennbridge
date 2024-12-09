@@ -1,6 +1,5 @@
 package org.cis1200.polybridge.components;
 
-
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,12 +16,14 @@ public class PrebuiltJoint extends Joint {
                     new PrebuiltJoint(500, 400)
             )
     );
+
     public PrebuiltJoint(int x, int y) {
         super(x, y);
     }
 
     @Override
     public void move(int newX, int newY) {
+        // cannot move
     }
 
     @Override
@@ -31,14 +32,18 @@ public class PrebuiltJoint extends Joint {
         if (highlighted) {
             gc.setColor(Color.GRAY);
             gc.setStroke(new BasicStroke(3));
-            gc.fillOval(getX() - JOINT_RADIUS, getY() - JOINT_RADIUS,
-                    2 * JOINT_RADIUS, 2 * JOINT_RADIUS);
+            gc.fillOval(
+                    getX() - JOINT_RADIUS, getY() - JOINT_RADIUS,
+                    2 * JOINT_RADIUS, 2 * JOINT_RADIUS
+            );
 
         }
         gc.setColor(Color.BLACK);
         gc.setStroke(new BasicStroke(3));
-        gc.drawOval(getX() - JOINT_RADIUS, getY() - JOINT_RADIUS,
-                2 * JOINT_RADIUS, 2 * JOINT_RADIUS);
+        gc.drawOval(
+                getX() - JOINT_RADIUS, getY() - JOINT_RADIUS,
+                2 * JOINT_RADIUS, 2 * JOINT_RADIUS
+        );
     }
 
     @Override
@@ -59,4 +64,3 @@ public class PrebuiltJoint extends Joint {
     }
 
 }
-
