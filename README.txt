@@ -7,7 +7,7 @@ PennKey: 68764294
 =: NOTE TO GRADER :=
 ===================
 - The file structure is pretty big and complicated. I did my best to show it in file_structure.png,
-- but you can download a version of the project here: https://github.com/chinmaygovind/polybridge
+- but you can download a version of the project here: https://github.com/chinmaygovind/pennbridge
 - Alternatively, a Google Drive link is here: https://drive.google.com/drive/folders/1VYc0TrBeJXNHzDl7a5M4PBlOGxH77xj3
 
 
