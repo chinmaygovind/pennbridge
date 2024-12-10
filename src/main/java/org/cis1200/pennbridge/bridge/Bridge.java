@@ -322,7 +322,7 @@ public class Bridge {
     public static Bridge loadBridge(BufferedReader reader) throws IOException {
         List<Joint> joints = new ArrayList<>();
         List<Member> members = new ArrayList<>();
-        for (String line : reader.lines().toList()){
+        for (String line : reader.lines().toList()) {
             String[] lineData = line.split(",");
             try {
                 if (lineData[0].equals("joint")) {
@@ -361,7 +361,7 @@ public class Bridge {
         bridgeComponents.addAll(joints);
         bridgeComponents.addAll(members);
         for (int i = 0; i < members.size(); i++) {
-            members.get(i).setNumber(i+1);
+            members.get(i).setNumber(i + 1);
         }
         return new Bridge(bridgeComponents);
     }

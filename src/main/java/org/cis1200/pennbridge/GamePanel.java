@@ -345,9 +345,6 @@ public class GamePanel extends JPanel {
             JScrollPane memberDetailsScroll = new JScrollPane(memberDetails);
             add(memberDetailsScroll);
 
-
-
-
             statusPanel = new StatusPanel(StatusPanel.STATUS_UNTESTED);
             add(statusPanel);
         }
@@ -451,6 +448,7 @@ public class GamePanel extends JPanel {
 
         private final JLabel statusLabel;
         private final JLabel costLabel;
+
         public StatusPanel(String status) {
             setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             this.statusLabel = new JLabel(STATUS_PREFIX + status);
@@ -463,6 +461,7 @@ public class GamePanel extends JPanel {
             this.statusLabel.setText(STATUS_PREFIX + status);
             repaint();
         }
+
         public void setCost(double cost) {
             this.costLabel.setText(COST_PREFIX + COST_FORMATTER.format(cost));
             repaint();
@@ -473,16 +472,18 @@ public class GamePanel extends JPanel {
             return new Dimension(0, 50);
         }
     }
+
     public void testBridge() {
         try {
             boolean bridgeSuccess = true;
             double[] highestForces = new double[bridge.getMembers().size()];
             double highForceScore = 0;
-            for (int loadX = Bridge.BRIDGE_LEFT_X; loadX < Bridge.BRIDGE_RIGHT_X && bridgeSuccess; loadX++) {
+            for (int loadX = Bridge.BRIDGE_LEFT_X; loadX < Bridge.BRIDGE_RIGHT_X
+                    && bridgeSuccess; loadX++) {
                 bridgeSuccess = bridge.solveMemberForces(loadX, Traveler.WEIGHT);
                 double score = 0;
                 for (double force : bridge.getSolvedMemberForces()) {
-                    score = Math.max(score, force*force);
+                    score = Math.max(score, force * force);
                 }
                 if (score > highForceScore) {
                     highForceScore = score;
@@ -494,7 +495,9 @@ public class GamePanel extends JPanel {
                 }
             }
             // if we got here then the truss is valid
-            statusPanel.setStatus(bridgeSuccess ? StatusPanel.STATUS_PASSED : StatusPanel.STATUS_FAILED);
+            statusPanel.setStatus(
+                    bridgeSuccess ? StatusPanel.STATUS_PASSED : StatusPanel.STATUS_FAILED
+            );
             if (bridgeSuccess) {
                 int i = 0;
                 for (Member m : bridge.getMembers()) {
@@ -506,8 +509,10 @@ public class GamePanel extends JPanel {
             repaint();
 
             // show simulation after 2s
-            Timer timer = new Timer(2000,
-                    arg0 -> SwingUtilities.invokeLater(new RunBridgeSimulator(bridge)));
+            Timer timer = new Timer(
+                    2000,
+                    arg0 -> SwingUtilities.invokeLater(new RunBridgeSimulator(bridge))
+            );
             timer.setRepeats(false);
             timer.start();
 

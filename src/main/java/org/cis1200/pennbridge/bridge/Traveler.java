@@ -40,6 +40,7 @@ public class Traveler extends Shape {
     public int getX() {
         return (int) position.getX();
     }
+
     @Override
     public void draw(Graphics gc) {
         gc.drawImage(
