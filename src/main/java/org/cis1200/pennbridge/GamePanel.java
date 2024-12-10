@@ -1,8 +1,8 @@
 package org.cis1200.pennbridge;
 
-import org.cis1200.pennbridge.components.*;
-import org.cis1200.pennbridge.components.Shape;
-import org.cis1200.pennbridge.components.Bridge;
+import org.cis1200.pennbridge.bridge.*;
+import org.cis1200.pennbridge.bridge.Shape;
+import org.cis1200.pennbridge.bridge.Bridge;
 import org.cis1200.pennbridge.truss.IndeterminateTrussException;
 import org.cis1200.pennbridge.truss.UnstableTrussException;
 

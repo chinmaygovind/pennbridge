@@ -1,10 +1,10 @@
-package org.cis1200.pennbridge.components;
+package org.cis1200.pennbridge.bridge;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
 
-import static org.cis1200.pennbridge.components.Joint.JOINT_RADIUS;
+import static org.cis1200.pennbridge.bridge.Joint.JOINT_RADIUS;
 
 public class JointPreview extends BridgeComponent {
 

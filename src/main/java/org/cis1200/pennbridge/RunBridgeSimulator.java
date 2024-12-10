@@ -2,7 +2,7 @@ package org.cis1200.pennbridge;
 
 // imports necessary libraries for Java swing
 
-import org.cis1200.pennbridge.components.Bridge;
+import org.cis1200.pennbridge.bridge.Bridge;
 
 import javax.swing.*;
 

@@ -1,8 +1,8 @@
 package org.cis1200.pennbridge;
 
-import org.cis1200.pennbridge.components.Bridge;
-import org.cis1200.pennbridge.components.BridgeComponent;
-import org.cis1200.pennbridge.components.Traveler;
+import org.cis1200.pennbridge.bridge.Bridge;
+import org.cis1200.pennbridge.bridge.BridgeComponent;
+import org.cis1200.pennbridge.bridge.Traveler;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -11,7 +11,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-import static org.cis1200.pennbridge.components.Traveler.*;
+import static org.cis1200.pennbridge.bridge.Traveler.*;
 
 public class BridgeSimulator extends JFrame {
 

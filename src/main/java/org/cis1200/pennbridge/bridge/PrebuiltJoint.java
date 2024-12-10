@@ -1,4 +1,4 @@
-package org.cis1200.pennbridge.components;
+package org.cis1200.pennbridge.bridge;
 
 import java.awt.*;
 import java.util.ArrayList;

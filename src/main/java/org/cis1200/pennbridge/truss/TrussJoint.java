@@ -1,6 +1,6 @@
 package org.cis1200.pennbridge.truss;
 
-import org.cis1200.pennbridge.components.Joint;
+import org.cis1200.pennbridge.bridge.Joint;
 
 import java.util.HashMap;
 import java.util.Objects;

@@ -1,4 +1,4 @@
-package org.cis1200.pennbridge.components;
+package org.cis1200.pennbridge.bridge;
 
 import org.cis1200.pennbridge.truss.Truss;
 import org.cis1200.pennbridge.truss.Vec2D;

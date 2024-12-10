@@ -1,6 +1,6 @@
 package org.cis1200.pennbridge.truss;
 
-import org.cis1200.pennbridge.components.Member;
+import org.cis1200.pennbridge.bridge.Member;
 
 public class TrussMember {
 

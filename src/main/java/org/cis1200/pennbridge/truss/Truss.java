@@ -1,7 +1,7 @@
 package org.cis1200.pennbridge.truss;
 
-import org.cis1200.pennbridge.components.Joint;
-import org.cis1200.pennbridge.components.Member;
+import org.cis1200.pennbridge.bridge.Joint;
+import org.cis1200.pennbridge.bridge.Member;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -111,7 +111,6 @@ public class Truss {
         }
     }
 
-    // TODO: unfuck this up
     public double[][] getForceMatrix() {
         // 2 equations for each joint, each equation has 1 term per member + constant
         // term

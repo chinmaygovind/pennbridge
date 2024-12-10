@@ -1,6 +1,6 @@
 package org.cis1200.pennbridge;
 
-import org.cis1200.pennbridge.components.Shape;
+import org.cis1200.pennbridge.bridge.Shape;
 
 import java.awt.*;
 
