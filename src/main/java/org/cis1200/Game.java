@@ -1,5 +1,7 @@
 package org.cis1200;
 
+import org.cis1200.pennbridge.RunPennbridge;
+
 import javax.swing.*;
 
 public class Game {
@@ -10,7 +12,7 @@ public class Game {
      */
     public static void main(String[] args) {
         // Set the game you want to run here
-        Runnable game = new org.cis1200.polybridge.RunPolybridge();
+        Runnable game = new RunPennbridge();
 
         SwingUtilities.invokeLater(game);
     }

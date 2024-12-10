@@ -1,0 +1,16 @@
+joint,100,400,true
+joint,200,400,true
+joint,300,400,true
+joint,400,400,true
+joint,500,400,true
+joint,250,150,false
+joint,350,150,false
+joint,200,250,false
+joint,225,275,false
+joint,300,300,false
+joint,400,300,false
+joint,425,275,false
+member,7,8
+member,8,9
+member,9,10
+member,10,11
