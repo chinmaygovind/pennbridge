@@ -29,6 +29,8 @@ public class HelpPanel extends JPanel {
     
             Tips:
             - If you're looking for inspiration, try Loading in one of the sample bridges.
+            - Red members indicate compression forces, blue indicates tension.
+            - A dashed line means the member breaks!
             - To share your bridge, Save your bridge to a .bridge file to send to your friends!
             - Use triangles for better structural stability.
             - Watch out for uneven weight distribution!
